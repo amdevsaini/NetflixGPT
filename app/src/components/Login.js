@@ -1,8 +1,27 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Header from "./Header";
+import { validateInput } from "../utils/validate";
 
 const Login = () => {
   const [isSignIn, setIsSignIn] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const name = useRef(null);
+  const email = useRef(null);
+  const password = useRef(null);
+
+  const handleOnClick = () => {
+    console.log(email.current.value);
+    console.log(password.current.value);
+    console.log(name.current.value);
+    if (email.current.value || password.current.value || name.current.value) {
+      const message = validateInput(email.current.value, password.current.value, name.current.value);
+      setErrorMessage(message);
+    } else {
+      setErrorMessage("Please enter the field value");
+    }
+  }
+
   const toggleForm = () => {
     setIsSignIn(!isSignIn);
   };
@@ -15,13 +34,14 @@ const Login = () => {
           alt="background-img"
         ></img>
       </div>
-      <form className="absolute w-1/3 my-20 p-10 bg-black  mx-auto right-0 left-0 text-white bg-opacity-80 rounded-lg">
+      <form onSubmit={(e) => e.preventDefault()} className="absolute w-1/3 my-20 p-10 bg-black  mx-auto right-0 left-0 text-white bg-opacity-80 rounded-lg">
         <h1 className="font-bold text-3xl py-4">
           {isSignIn ? "Sign In" : "Sign Up"}
         </h1>
         {!isSignIn && (
           <>
             <input
+              ref={name}
               type="text"
               placeholder="Full name"
               className="p-4 my-2 w-full bg-gray-700 h-12"
@@ -29,16 +49,18 @@ const Login = () => {
           </>
         )}
         <input
+          ref={email}
           type="text"
           placeholder="Email Address"
           className="p-4 my-2 w-full bg-gray-700 h-12"
         />
         <input
+          ref={password}
           type="password"
           placeholder="Password"
           className="p-4 my-2 w-full bg-gray-700 h-12"
         />
-        <button className="p-2 my-6 bg-red-700 w-full rounded-lg h-12">
+        <button className="p-2 my-6 bg-red-700 w-full rounded-lg h-12" onClick={handleOnClick}>
           {isSignIn ? "Sign In" : "Sign Up"}
         </button>
 
