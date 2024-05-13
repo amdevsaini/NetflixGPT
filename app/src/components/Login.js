@@ -10,19 +10,21 @@ const Login = () => {
   const email = useRef(null);
   const password = useRef(null);
 
+  const handleChange = () => {
+    setErrorMessage("")
+  }
+
   const handleOnClick = () => {
-    console.log(email.current.value);
-    console.log(password.current.value);
-    console.log(name.current.value);
-    if (email.current.value || password.current.value || name.current.value) {
-      const message = validateInput(email.current.value, password.current.value, name.current.value);
-      setErrorMessage(message);
-    } else {
-      setErrorMessage("Please enter the field value");
-    }
+      if (email?.current?.value || password?.current?.value || name?.current?.value) {
+        const message = validateInput(email?.current?.value, password?.current?.value, name?.current?.value, isSignIn);
+        setErrorMessage(message);
+      } else {
+        setErrorMessage("Please enter the field value");
+      }
   }
 
   const toggleForm = () => {
+    setErrorMessage("")
     setIsSignIn(!isSignIn);
   };
   return (
@@ -44,6 +46,7 @@ const Login = () => {
               ref={name}
               type="text"
               placeholder="Full name"
+              onChange={handleChange}
               className="p-4 my-2 w-full bg-gray-700 h-12"
             />
           </>
@@ -52,14 +55,17 @@ const Login = () => {
           ref={email}
           type="text"
           placeholder="Email Address"
+          onChange={handleChange}
           className="p-4 my-2 w-full bg-gray-700 h-12"
         />
         <input
           ref={password}
           type="password"
           placeholder="Password"
+          onChange={handleChange}
           className="p-4 my-2 w-full bg-gray-700 h-12"
         />
+        <p className="text-xs text-red-600">{errorMessage}</p>
         <button className="p-2 my-6 bg-red-700 w-full rounded-lg h-12" onClick={handleOnClick}>
           {isSignIn ? "Sign In" : "Sign Up"}
         </button>

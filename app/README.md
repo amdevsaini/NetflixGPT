@@ -7,6 +7,8 @@
 - Signup Form
 - Form Validation
 - useRef Hook
+- Fiirebase Setup
+- Deployment to Production
 
 # Features
 
