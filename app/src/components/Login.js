@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import Header from "./Header";
 import { validateInput } from "../utils/validate";
+import { registerUser, loginUser } from "../utils/routing";
 
 const Login = () => {
   const [isSignIn, setIsSignIn] = useState(true);
@@ -13,13 +14,23 @@ const Login = () => {
   const handleChange = () => {
     setErrorMessage("")
   }
+  
+  let data = "";
+
+  const handleApi = async (email, password, name = false) => {
+
+    if (name) await registerUser(email, password, name)
+      else await loginUser(email, password)
+    
+  }
 
   const handleOnClick = () => {
       if (email?.current?.value || password?.current?.value || name?.current?.value) {
         const message = validateInput(email?.current?.value, password?.current?.value, name?.current?.value, isSignIn);
-        setErrorMessage(message);
+        message === null ? handleApi(email?.current?.value, password?.current?.value, name?.current?.value) : setErrorMessage(message);
       } else {
         setErrorMessage("Please enter the field value");
+        return;
       }
   }
 
