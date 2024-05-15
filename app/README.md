@@ -9,6 +9,8 @@
 - useRef Hook
 - Fiirebase Setup
 - Deployment to Production
+- Created user Signup and SignIn Account
+- Setting up the redux store.
 
 # Features
 

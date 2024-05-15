@@ -12,7 +12,7 @@ export const registerUser = async (email, password, name) => {
         })
     })
 
-    return response;
+    return await response.json();
 }
 
 export const loginUser = async (email, password) => {
@@ -26,6 +26,6 @@ export const loginUser = async (email, password) => {
             email, password
         })
     })
-
-    return response;
+    console.log("tttttttttt", response);
+    return await response.json();
 }

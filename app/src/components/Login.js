@@ -6,6 +6,7 @@ import { registerUser, loginUser } from "../utils/routing";
 const Login = () => {
   const [isSignIn, setIsSignIn] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  
 
   const name = useRef(null);
   const email = useRef(null);
@@ -18,9 +19,15 @@ const Login = () => {
   let data = "";
 
   const handleApi = async (email, password, name = false) => {
+    let data = '';
+    if (name) data = await registerUser(email, password, name)
+      else data = await loginUser(email, password)
 
-    if (name) await registerUser(email, password, name)
-      else await loginUser(email, password)
+    console.log("data", data);
+    if (data.code === 'INVALID_CREDENTIALS' || data?.err?.keyValue?.email === email) {
+      console.log("PPPPPPPPPP", data);
+      setErrorMessage(data.message);
+    }
     
   }
 
