@@ -2,47 +2,85 @@ import React, { useRef, useState } from "react";
 import Header from "./Header";
 import { validateInput } from "../utils/validate";
 import { registerUser, loginUser } from "../utils/routing";
+import { useDispatch } from "react-redux";
+import { addUser } from '../utils/userSlice'
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [isSignIn, setIsSignIn] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
-  
+  const [isRegistered, setIsRegistered] = useState(false);
+  const dispatch = useDispatch();
 
   const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
 
   const handleChange = () => {
-    setErrorMessage("")
-  }
-  
-  let data = "";
+    setErrorMessage("");
+    setIsRegistered('');
+  };
 
   const handleApi = async (email, password, name = false) => {
-    let data = '';
-    if (name) data = await registerUser(email, password, name)
-      else data = await loginUser(email, password)
-
-    console.log("data", data);
-    if (data.code === 'INVALID_CREDENTIALS' || data?.err?.keyValue?.email === email) {
-      console.log("PPPPPPPPPP", data);
+    let data = "";
+    if (name) {
+      data = await registerUser(email, password, name);
+      if (data.success) {
+            setIsRegistered('Registered successfully')
+            setIsSignIn(true);
+      }
+    } else if (!name) {
+      data = await loginUser(email, password);
+      if (data.code === 'LOGGEDIN'){
+        dispatch(addUser({
+          accessToken: data.accessToken,
+          name: data.name,
+          email: data.email,
+          code: data.code
+        }))
+        navigate('/browse')
+      }
+    } else  {}
+    if (
+      data.code === "INVALID_CREDENTIALS" ||
+      data?.err?.keyValue?.email === email
+    ) {
       setErrorMessage(data.message);
     }
-    
-  }
+
+    console.log("data", data);
+  };
 
   const handleOnClick = () => {
-      if (email?.current?.value || password?.current?.value || name?.current?.value) {
-        const message = validateInput(email?.current?.value, password?.current?.value, name?.current?.value, isSignIn);
-        message === null ? handleApi(email?.current?.value, password?.current?.value, name?.current?.value) : setErrorMessage(message);
-      } else {
-        setErrorMessage("Please enter the field value");
-        return;
-      }
-  }
+    if (
+      email?.current?.value ||
+      password?.current?.value ||
+      name?.current?.value
+    ) {
+      const message = validateInput(
+        email?.current?.value,
+        password?.current?.value,
+        name?.current?.value,
+        isSignIn
+      );
+      message === null
+        ? handleApi(
+            email?.current?.value,
+            password?.current?.value,
+            name?.current?.value
+          )
+        : setErrorMessage(message);
+    } else {
+      setErrorMessage("Please enter the field value");
+      return;
+    }
+  };
+
+
 
   const toggleForm = () => {
-    setErrorMessage("")
+    setErrorMessage("");
     setIsSignIn(!isSignIn);
   };
   return (
@@ -54,7 +92,10 @@ const Login = () => {
           alt="background-img"
         ></img>
       </div>
-      <form onSubmit={(e) => e.preventDefault()} className="absolute w-1/3 my-20 p-10 bg-black  mx-auto right-0 left-0 text-white bg-opacity-80 rounded-lg">
+      <form
+        onSubmit={(e) => e.preventDefault()}
+        className="absolute w-1/3 my-20 p-10 bg-black  mx-auto right-0 left-0 text-white bg-opacity-80 rounded-lg"
+      >
         <h1 className="font-bold text-3xl py-4">
           {isSignIn ? "Sign In" : "Sign Up"}
         </h1>
@@ -84,7 +125,11 @@ const Login = () => {
           className="p-4 my-2 w-full bg-gray-700 h-12"
         />
         <p className="text-xs text-red-600">{errorMessage}</p>
-        <button className="p-2 my-6 bg-red-700 w-full rounded-lg h-12" onClick={handleOnClick}>
+        <p className="text-xs text-green-600">{isRegistered}</p>
+        <button
+          className="p-2 my-6 bg-red-700 w-full rounded-lg h-12"
+          onClick={handleOnClick}
+        >
           {isSignIn ? "Sign In" : "Sign Up"}
         </button>
 
